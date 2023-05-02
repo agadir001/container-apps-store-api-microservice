@@ -70,7 +70,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ env.REGISTRY }}/${{ set-env.outputs.repository }}/${{ matrix.services.appName }}
+          images: ${{ env.REGISTRY }}/agadir001/container-apps-store-api-microservice/${{ matrix.services.appName }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
