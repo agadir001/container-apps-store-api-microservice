@@ -1,4 +1,4 @@
-oname: My Build and Deploy Docker Image CI
+ame: My Build and Deploy Docker Image CI
 
 on:
   workflow_dispatch:
