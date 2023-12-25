@@ -45,6 +45,4 @@ jobs:
         tags: $${{ steps.metadata.outputs.tags }}
     - name: Output images tags
       run: echo "image-$${{ matrix.services.appname }} = ${{ env.REGISTRY }}/apps-store/${{ matrix.services.appname }}"
-#deploy:
-#  needs: [build]
-#  steps:
+
