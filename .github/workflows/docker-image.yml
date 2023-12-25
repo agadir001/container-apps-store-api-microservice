@@ -1,0 +1,15 @@
+name: My Build and Deploy Docker Image CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Go service image
+      run: docker build . --file go-service/Dockerfile --tag my-image-name:$(date +%s)
