@@ -26,7 +26,7 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - name: extract docker metadata
       id: metadata
-      users: docker/metadata-action@v5.4.0
+      uses: docker/metadata-action@v5.4.0
       with:
         images: ${{ env.REGISTRY }}/apps-store/${{ matrix.services.appname }}
         tags: |
