@@ -7,7 +7,6 @@ env:
 jobs:
   build:
     name: build images
-    if: ${{ env.executeBuild }} == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
