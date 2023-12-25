@@ -2,14 +2,46 @@ name: My Build and Deploy Docker Image CI
 
 on:
   workflow_dispatch:
-
+env:
+  REGISTRY: sshtechacr007.azurecr.io
 jobs:
-
   build:
-
+    name: build images
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        services:
+          [
+            { "appname": "node-service", "directory": "./node-service" },
+            { "appname": "python-service", "directory": "./python-service" },
+            { "appname": "go-service", "directory": "./go-service" },
+          ]
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Go service image
-      run: docker build . --file ./go-service/Dockerfile --tag my-image-name:$(date +%s)
+      name: Checkout repository
+    - uses: docker/login-action@v3.0.0
+      name: Login to acr
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - name: extract docker metadata
+      id: metadata
+      users: docker/metadata-action@v5.4.0
+      with:
+        images: ${{ env.REGISTRY }}/apps-store/${{ matrix.services.appname }}
+        tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=ref,event=branch
+            type=sha
+          
+    - name: Docker build and push
+      uses: docker/build-push-action@v5.1.0
+      with:
+        context: ${{ matrix.services.directory }}
+        push: true
+        tags: $${{ steps.metadata.outputs.tags }}
+    - name: Output images tags
+      run: echo "image-$${{ matrix.services.appname }} = ${{ env.REGISTRY }}/apps-store/${{ matrix.services.appname }}"
