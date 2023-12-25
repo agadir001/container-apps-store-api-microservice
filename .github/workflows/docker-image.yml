@@ -3,9 +3,11 @@ on:
   workflow_dispatch:
 env:
   REGISTRY: sshtechacr007.azurecr.io
+  executeBuild: 'false'
 jobs:
   build:
     name: build images
+    if: ${{ env.executeBuild }} == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
