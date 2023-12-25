@@ -44,4 +44,31 @@ jobs:
         tags: ${{ steps.metadata.outputs.tags }}
     - name: Output images tags
       run: echo "image-${{ matrix.services.appname }} = ${{ env.REGISTRY }}/apps-store/${{ matrix.services.appname }}"
-
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4.1.1
+      - name: Azure Login
+        uses: Azure/login@v1.5.0
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: deploy bicep
+        uses: Azure/cli@v1.0.9
+        with:
+          inlineScript: |
+            az group create -n ${{ secrets.RESOURCE_GROUP }} -l francecentral
+            az deployment group create -g ${{ secrets.RESOURCE_GROUP }} --name deploybicep -f ./deploy/main.bicep \
+             -p \
+                minReplicas=0 \
+                nodeImage='sshtechacr007.azurecr.io/apps-store/node-service:sha-6a6c864' \
+                nodePort=3000 \
+                pythonImage='sshtechacr007.azurecr.io/apps-store/python-service:sha-6a6c864' \
+                pythonPort=5000 \
+                goImage='sshtechacr007.azurecr.io/apps-store/go-service:sha-6a6c864' \
+                goPort=8050 \
+                containerRegistry=${{ env.REGISTRY }} \
+                containerRegistryUsername=${{ secrets.REGISTRY_USERNAME }} \
+                containerRegistryPassword=${{ secrets.REGISTRY_PASSWORD }} \
+                deployApim=false
+    
