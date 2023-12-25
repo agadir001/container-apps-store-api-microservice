@@ -12,4 +12,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Go service image
-      run: docker build . --file go-service/Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file ./go-service/Dockerfile --tag my-image-name:$(date +%s)
